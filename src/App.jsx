@@ -6,7 +6,6 @@ import CartPage from './pages/CartPage.jsx';
 import OrdersPage from './pages/OrdersPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
-import './App.css';
 
 const Router = createBrowserRouter([
     {
