@@ -1,0 +1,41 @@
+{
+  "books": [
+    { "id": 1, "title": "三体", "author": "刘慈欣", "price": "59.00", "cover": "https://img3m4.ddimg.cn/32/35/23579654-1_b_1740123779.jpg" },
+    { "id": 2, "title": "活着", "author": "余华", "price": "39.00", "cover": "https://img3m3.ddimg.cn/23/25/29311943-1_b_34.jpg" },
+    { "id": 3, "title": "围城", "author": "钱钟书", "price": "42.00", "cover": "https://img3m9.ddimg.cn/19/20/25095529-1_b_3.jpg" },
+    { "id": 4, "title": "平凡的世界", "author": "路遥", "price": "68.00", "cover": "https://img3m4.ddimg.cn/34/12/29253544-1_b_1701235932.jpg" },
+    { "id": 5, "title": "三国演义", "author": "罗贯中", "price": "45.00", "cover": "https://img3m2.ddimg.cn/10/23/102772-1_b_1688623719.jpg" }
+  ],
+  "cartItems": [
+    { "id": 1, "title": "三体", "price": "59.00", "quantity": 1, "cover": "https://img3m4.ddimg.cn/32/35/23579654-1_b_1740123779.jpg" },
+    { "id": 2, "title": "活着", "price": "39.00", "quantity": 2, "cover": "https://img3m3.ddimg.cn/23/25/29311943-1_b_34.jpg" }
+  ],
+  "orders": [
+    { 
+      "id": "20230001", 
+      "date": "2023-05-15", 
+      "status": "delivered", 
+      "amount": "98.00",
+      "items": [
+        { "title": "三体", "quantity": 1, "price": "59.00" },
+        { "title": "活着", "quantity": 1, "price": "39.00" }
+      ]
+    },
+    { 
+      "id": "20230002", 
+      "date": "2023-05-20", 
+      "status": "processing", 
+      "amount": "68.00",
+      "items": [
+        { "title": "平凡的世界", "quantity": 1, "price": "68.00" }
+      ]
+    }
+  ],
+  "userInfo": {
+    "username": "cozease",
+    "name": "ysy",
+    "email": "my_jAccount@sjtu.edu.cn",
+    "phone": "11111111111",
+    "address": "上海交通大学"
+  }
+}
