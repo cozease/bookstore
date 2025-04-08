@@ -1,0 +1,22 @@
+.logo {
+  height: 32px;
+  margin: 16px;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.site-layout-content {
+  padding: 24px;
+  background: #fff;
+  min-height: 280px;
+}
+
+.ant-layout {
+  min-height: 100vh;
+}
+
+.content-container {
+  padding: 24px;
+}

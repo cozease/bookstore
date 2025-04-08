@@ -1,10 +1,55 @@
 {
   "books": [
-    { "id": 1, "title": "三体", "author": "刘慈欣", "price": "59.00", "cover": "https://img3m4.ddimg.cn/32/35/23579654-1_b_1740123779.jpg" },
-    { "id": 2, "title": "活着", "author": "余华", "price": "39.00", "cover": "https://img3m3.ddimg.cn/23/25/29311943-1_b_34.jpg" },
-    { "id": 3, "title": "围城", "author": "钱钟书", "price": "42.00", "cover": "https://img3m9.ddimg.cn/19/20/25095529-1_b_3.jpg" },
-    { "id": 4, "title": "平凡的世界", "author": "路遥", "price": "68.00", "cover": "https://img3m4.ddimg.cn/34/12/29253544-1_b_1701235932.jpg" },
-    { "id": 5, "title": "三国演义", "author": "罗贯中", "price": "45.00", "cover": "https://img3m2.ddimg.cn/10/23/102772-1_b_1688623719.jpg" }
+    {
+      "id": 1,
+      "title": "三体",
+      "author": "刘慈欣",
+      "price": "59.00",
+      "cover": "https://img3m4.ddimg.cn/32/35/23579654-1_b_1740123779.jpg",
+      "publisher": "重庆出版社",
+      "stock": 100,
+      "description": "作品讲述了地球人类文明和三体文明的信息交流、生死搏杀及两个文明在宇宙中的兴衰历程。《三体》的文本叙事在“后人类”的思考上有着重大突破，构建了科学与文学的互动范式，将道德内涵引入对科技的辩证思考中，并以文学手段在文化语境中对科技进行大胆假设和重构，但科技核心只是一个叙事跳板，是完成现实超越的重要媒介，也是人类命运共同体书写的重要工具。《三体》最吸引人的地方在于通过对人类中心主义的解构，继而完成对人与自然、动物之间的伦理反思与文学表达，最终指向去人类中心化的思想内核。"
+    },
+    {
+      "id": 2,
+      "title": "活着",
+      "author": "余华",
+      "price": "39.00",
+      "cover": "https://img3m3.ddimg.cn/23/25/29311943-1_b_34.jpg",
+      "publisher": "作家出版社",
+      "stock": 50,
+      "description": "讲述了农村人福贵悲惨的人生，但仍不失生的尊严..."
+    },
+    {
+      "id": 3,
+      "title": "围城",
+      "author": "钱钟书",
+      "price": "42.00",
+      "cover": "https://img3m9.ddimg.cn/19/20/25095529-1_b_3.jpg",
+      "publisher": "人民文学出版社",
+      "stock": 30,
+      "description": "围城是钱钟书的代表作之一，讲述了一个知识分子在围城内外的生活和思考。"
+    },
+    {
+      "id": 4,
+      "title": "平凡的世界",
+      "author": "路遥",
+      "price": "68.00",
+      "cover": "https://img3m4.ddimg.cn/34/12/29253544-1_b_1701235932.jpg",
+      "publisher": "作家出版社",
+      "stock": 20,
+      "description": "平凡的世界是路遥的代表作之一，讲述了一个普通人在艰难环境中奋斗的故事。"
+    },
+    {
+      "id": 5,
+      "title": "三国演义",
+      "author": "罗贯中",
+      "price": "45.00",
+      "cover": "https://img3m2.ddimg.cn/10/23/102772-1_b_1688623719.jpg",
+      "publisher": "人民文学出版社",
+      "stock": 15,
+      "description": "三国演义是中国古典小说的巅峰之作，讲述了三国时期的英雄豪杰和智勇之计。"
+    }
   ],
   "cartItems": [
     { "id": 1, "title": "三体", "price": "59.00", "quantity": 1, "cover": "https://img3m4.ddimg.cn/32/35/23579654-1_b_1740123779.jpg" },

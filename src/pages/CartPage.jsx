@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Table, InputNumber, Button, Space, message } from 'antd';
+import { Typography, Table, InputNumber, Button, Space, message, Input } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import data from '../assets/data.json';
 
 const { Title } = Typography;
+const { Search } = Input;
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -83,7 +84,16 @@ const CartPage = () => {
   return (
     <div>
       <Title level={2}>购物车</Title>
-
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <Search
+            placeholder="input search text"
+            allowClear
+            enterButton="Search"
+            size="large"
+            style={{ marginBottom: 20 }}
+            // onSearch={onSearch}
+        />
+      </div>
       <Table
         dataSource={cartItems}
         columns={columns}

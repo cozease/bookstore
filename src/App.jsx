@@ -6,6 +6,8 @@ import CartPage from './pages/CartPage.jsx';
 import OrdersPage from './pages/OrdersPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
+import BookDetail from './pages/BookDetail.jsx';
+import './App.css';
 
 const Router = createBrowserRouter([
     {
@@ -28,6 +30,10 @@ const Router = createBrowserRouter([
             {
                 path: "profile",
                 element: <ProfilePage />
+            },
+            {
+                path: "book/:id",
+                element: <BookDetail />
             }
         ]
     }
@@ -38,3 +44,4 @@ function App() {
 }
 
 export default App;
+
