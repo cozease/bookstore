@@ -4,5 +4,5 @@
 
 ## 代码仓库
 
-- 前端：frontend 分支
-- 后端：backend 分支
+- 前端：[frontend 分支](https://github.com/cozease/bookstore/tree/frontend)
+- 后端：[backend 分支](https://github.com/cozease/bookstore/tree/backend)
