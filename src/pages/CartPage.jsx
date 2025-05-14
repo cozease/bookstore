@@ -1,46 +1,91 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Table, InputNumber, Button, Space, message, Input } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
-import data from '../assets/data.json';
-
-const { Title } = Typography;
-const { Search } = Input;
+import { Table, Button, InputNumber, Space, message, Card, Modal } from 'antd';
+import { DeleteOutlined, ShoppingOutlined } from '@ant-design/icons';
+import { CartService } from '../services/cartService';
+import { OrderService } from '../services/orderService';
+import noCoverImage from '../assets/nocover.png';
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [checkoutModalVisible, setCheckoutModalVisible] = useState(false);
+  const user = JSON.parse(localStorage.getItem('user'));
 
-  useEffect(() => {
-    setCartItems(data.cartItems);
-  }, []);
-
-  const handleQuantityChange = (id, value) => {
-    message.success(`已更新商品数量: ${value}`);
-    setCartItems((prevItems) =>
-      prevItems.map((item) => (item.id === id ? { ...item, quantity: value } : item))
-    );
+  // 加载购物车数据
+  const loadCartItems = async () => {
+    try {
+      setLoading(true);
+      const data = await CartService.getCartItems(user.id);
+      setCartItems(data);
+    } catch (error) {
+      message.error('加载购物车失败');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleRemove = (id) => {
-    message.success(`已从购物车移除商品`);
+  useEffect(() => {
+    loadCartItems();
+  }, []);
+
+  // 更新商品数量
+  const handleQuantityChange = async (id, quantity) => {
+    try {
+      await CartService.updateCartItem(id, quantity);
+      await loadCartItems();
+      message.success('数量已更新');
+    } catch (error) {
+      message.error(error.message || '更新数量失败');
+    }
+  };
+
+  // 删除商品
+  const handleDelete = async (id) => {
+    try {
+      await CartService.removeFromCart(id);
+      message.success('删除成功');
+      await loadCartItems();
+    } catch (error) {
+      message.error(error.message || '删除失败');
+    }
+  };
+
+  // 结算
+  const handleCheckout = async () => {
+    try {
+      await OrderService.createOrder(user.id, user.address);
+      message.success('下单成功！');
+      await loadCartItems();
+      setCheckoutModalVisible(false);
+    } catch (error) {
+      message.error(error.message || '下单失败');
+    }
   };
 
   const columns = [
     {
-      title: '商品',
-      dataIndex: 'title',
-      key: 'title',
-      render: (text, record) => (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <img src={record.cover} alt={text} style={{ marginRight: 10, width: 50, height: 50 }} />
-          {text}
-        </div>
+      title: '图书',
+      dataIndex: 'book',
+      key: 'book',
+      render: (book) => (
+        <Space>
+          <img 
+            src={book.coverUrl || noCoverImage} 
+            alt={book.title} 
+            style={{ width: 50 }}
+          />
+          <div>
+            <div>{book.title}</div>
+            <div style={{ color: '#666' }}>{book.author}</div>
+          </div>
+        </Space>
       ),
     },
     {
       title: '单价',
-      dataIndex: 'price',
+      dataIndex: ['book', 'price'],
       key: 'price',
-      render: (price) => `¥${price}`,
+      render: (price) => `￥${(price / 100).toFixed(2)}`,
     },
     {
       title: '数量',
@@ -49,15 +94,16 @@ const CartPage = () => {
       render: (quantity, record) => (
         <InputNumber
           min={1}
-          defaultValue={quantity}
+          max={record.book.stock}
+          value={quantity}
           onChange={(value) => handleQuantityChange(record.id, value)}
         />
       ),
     },
     {
-      title: '金额',
-      key: 'amount',
-      render: (_, record) => `¥${(parseFloat(record.price) * record.quantity).toFixed(2)}`,
+      title: '小计',
+      key: 'subtotal',
+      render: (_, record) => `￥${((record.book.price * record.quantity) / 100).toFixed(2)}`,
     },
     {
       title: '操作',
@@ -67,7 +113,7 @@ const CartPage = () => {
           type="text"
           danger
           icon={<DeleteOutlined />}
-          onClick={() => handleRemove(record.id)}
+          onClick={() => handleDelete(record.id)}
         >
           删除
         </Button>
@@ -75,40 +121,66 @@ const CartPage = () => {
     },
   ];
 
-  // 计算总金额
   const totalAmount = cartItems.reduce(
-    (sum, item) => sum + parseFloat(item.price) * item.quantity,
+    (sum, item) => sum + item.book.price * item.quantity,
     0
-  ).toFixed(2);
+  );
 
   return (
-    <div>
-      <Title level={2}>购物车</Title>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <Search
-            placeholder="input search text"
-            allowClear
-            enterButton="Search"
-            size="large"
-            style={{ marginBottom: 20 }}
-            // onSearch={onSearch}
+    <div className="cart-page">
+      <Card title="购物车">
+        <Table
+          loading={loading}
+          columns={columns}
+          dataSource={cartItems}
+          rowKey="id"
+          pagination={false}
         />
-      </div>
-      <Table
-        dataSource={cartItems}
-        columns={columns}
-        rowKey="id"
-        pagination={false}
-      />
-      
-      <div style={{ marginTop: 20, textAlign: 'right' }}>
-        <Space>
-          <Title level={4}>总计: ¥{totalAmount}</Title>
-          <Button type="primary" size="large">
-            结算
-          </Button>
-        </Space>
-      </div>
+        
+        <div style={{ textAlign: 'right', marginTop: 20 }}>
+          <Space>
+            <span style={{ fontSize: '16px' }}>
+              总计: <span style={{ color: '#f50', fontWeight: 'bold' }}>￥{(totalAmount / 100).toFixed(2)}</span>
+            </span>
+            <Button
+              type="primary"
+              icon={<ShoppingOutlined />}
+              onClick={() => setCheckoutModalVisible(true)}
+              disabled={cartItems.length === 0}
+              size="large"
+            >
+              结算
+            </Button>
+          </Space>
+        </div>
+      </Card>
+
+      <Modal
+        title="确认订单"
+        open={checkoutModalVisible}
+        onOk={handleCheckout}
+        onCancel={() => setCheckoutModalVisible(false)}
+        destroyOnClose
+      >
+        <div style={{ marginBottom: 16 }}>
+          <h4>收货地址：</h4>
+          <p>{user.address}</p>
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <h4>订单商品：</h4>
+          <ul>
+            {cartItems.map(item => (
+              <li key={item.id}>
+                {item.book.title} × {item.quantity}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div style={{ fontSize: '16px', color: '#f50' }}>
+          总金额：￥{(totalAmount / 100).toFixed(2)}
+        </div>
+        <p style={{ marginTop: 16 }}>确认要下单吗？</p>
+      </Modal>
     </div>
   );
 };

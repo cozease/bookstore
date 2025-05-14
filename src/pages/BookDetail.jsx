@@ -1,113 +1,109 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Typography, Button, Row, Col, Table, Card } from 'antd';
-import { ShoppingCartOutlined, ArrowLeftOutlined, ShoppingOutlined } from '@ant-design/icons';
-import data from '../assets/data.json';
+import { Typography, Button, Row, Col, Card, message, Modal } from 'antd';
+import { ShoppingCartOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { BookService } from '../services/bookService';
+import { CartService } from '../services/cartService';
+import noCoverImage from '../assets/nocover.png';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const BookDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const book = data.books.find(book => book.id === parseInt(id));
+  const [book, setBook] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-    if (!book) {
-        return (
-            <div>
-                <Button icon={<ArrowLeftOutlined />} style={{ marginBottom: '20px' }} onClick={() => navigate('/')}>
-                    返回首页
-                </Button>
-                <div>Oops! 书籍未找到</div>
-            </div>
-        );
+  useEffect(() => {
+    const fetchBook = async () => {
+      try {
+        const data = await BookService.getBookById(id);
+        setBook(data);
+      } catch (error) {
+        message.error('获取图书信息失败');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBook();
+  }, [id]);
+
+  const handleAddToCart = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user) {
+        navigate('/login');
+        return;
+      }
+      await CartService.addToCart(user.id, book.id, 1);
+      setIsModalVisible(true);
+    } catch (error) {
+      message.error(error.message || '添加失败');
     }
+  };
 
-  const columns = [
-    {
-      title: '项目',
-      dataIndex: 'item',
-      key: 'item',
-    },
-    {
-      title: '内容',
-      dataIndex: 'content',
-      key: 'content',
-    }
-  ];
+  const handleViewCart = () => {
+    navigate('/cart');
+  };
 
-  const tableData = [
-    { key: '1', item: '书名', content: book.title },
-    { key: '2', item: '作者', content: book.author },
-    { key: '3', item: '出版社', content: book.publisher },
-    { key: '4', item: '价格', content: `¥${book.price}` },
-    { key: '5', item: '库存', content: `${book.stock}本` },
-  ];
+  if (loading) {
+    return <div>加载中...</div>;
+  }
+
+  if (!book) {
+    return (
+      <div>
+        <Button icon={<ArrowLeftOutlined />} style={{ marginBottom: '20px' }} onClick={() => navigate('/')}>
+          返回首页
+        </Button>
+        <div>Oops! 书籍未找到</div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <Button 
-        icon={<ArrowLeftOutlined />} 
-        style={{ marginBottom: '20px' }}
-        onClick={() => navigate('/')}
-      >
+    <div className="book-detail">
+      <Button icon={<ArrowLeftOutlined />} style={{ marginBottom: '20px' }} onClick={() => navigate('/')}>
         返回首页
       </Button>
-      
-      <Row gutter={[24, 24]}>
-        <Col xs={24} md={9}>
-          <div style={{ 
-            height: '100%', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            background: '#fafafa',
-            border: '1px solid #f0f0f0',
-            borderRadius: '2px'
-          }}>
-            <img 
-              src={book.cover} 
-              alt={book.title}
-              style={{
-                objectFit: 'contain'
-              }}
-            />
-          </div>
-        </Col>
-        <Col xs={24} md={15}>
-          <Table 
-            columns={columns} 
-            dataSource={tableData} 
-            pagination={false}
-            bordered
-          />
-        </Col>
-      </Row>
 
-      <Card
-        title="书籍简介"
-        style={{ marginTop: '24px', marginBottom: '24px' }}
-      >
-        <p>{book.description || '暂无简介'}</p>
+      <Card>
+        <Row gutter={24}>
+          <Col span={8}>
+            <img src={book.coverUrl || noCoverImage} alt={book.title} style={{ width: '100%' }} />
+          </Col>
+          <Col span={16}>
+            <Title level={2}>{book.title}</Title>
+            <p><Text strong>作者：</Text>{book.author}</p>
+            <p><Text strong>出版社：</Text>{book.publisher}</p>
+            <p><Text strong>价格：</Text>￥{(book.price / 100).toFixed(2)}</p>
+            <p><Text strong>库存：</Text>{book.stock}</p>
+            <p><Text strong>简介：</Text>{book.description}</p>
+            
+            <Button 
+              type="primary" 
+              icon={<ShoppingCartOutlined />} 
+              size="large"
+              onClick={handleAddToCart}
+              disabled={book.stock <= 0}
+            >
+              {book.stock > 0 ? '加入购物车' : '暂时缺货'}
+            </Button>
+          </Col>
+        </Row>
       </Card>
 
-      <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-        <Button 
-          type="primary" 
-          icon={<ShoppingCartOutlined />} 
-          size="large"
-          style={{ marginRight: '15vw' }}
-        >
-          加入购物车
-        </Button>
-        <Button 
-          type="primary" 
-          icon={<ShoppingOutlined />} 
-          size="large"
-          danger
-        >
-          立即购买
-        </Button>
-      </div>
+      <Modal
+        title="添加成功"
+        open={isModalVisible}
+        onOk={handleViewCart}
+        onCancel={() => setIsModalVisible(false)}
+        okText="查看购物车"
+        cancelText="继续购物"
+      >
+        <p>《{book?.title}》已成功添加到购物车！</p>
+      </Modal>
     </div>
   );
 };

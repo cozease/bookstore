@@ -7,9 +7,19 @@ import OrdersPage from './pages/OrdersPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
 import BookDetail from './pages/BookDetail.jsx';
-import './App.css';
+import LoginPage from './pages/LoginPage.jsx';
+import BookManagePage from './pages/BookManagePage.jsx';
+import UserManagePage from './pages/UserManagePage.jsx';
+import PrivateRoute from './components/PrivateRoute.jsx';
+import AdminRoute from './components/AdminRoute.jsx';
+import './css/App.css';
 
 const Router = createBrowserRouter([
+    {
+        path: "/login",
+        element: <LoginPage />,
+        errorElement: <ErrorPage />
+    },
     {
         path: "/",
         element: <MainLayout />,
@@ -21,19 +31,27 @@ const Router = createBrowserRouter([
             },
             {
                 path: "cart",
-                element: <CartPage />
+                element: <PrivateRoute><CartPage /></PrivateRoute>
             },
             {
                 path: "orders",
-                element: <OrdersPage />
+                element: <PrivateRoute><OrdersPage /></PrivateRoute>
             },
             {
                 path: "profile",
-                element: <ProfilePage />
+                element: <PrivateRoute><ProfilePage /></PrivateRoute>
             },
             {
                 path: "book/:id",
                 element: <BookDetail />
+            },
+            {
+                path: "book-manage",
+                element: <AdminRoute><BookManagePage /></AdminRoute>
+            },
+            {
+                path: "user-manage",
+                element: <AdminRoute><UserManagePage /></AdminRoute>
             }
         ]
     }

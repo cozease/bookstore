@@ -1,0 +1,18 @@
+.carousel-content {
+  height: 240px;
+  color: #fff;
+  line-height: 240px;
+  text-align: center;
+  background: #364d79;
+}
+
+.book-price {
+  margin-top: 10px;
+  color: #f50;
+}
+
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}

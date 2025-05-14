@@ -1,0 +1,14 @@
+.main-layout {
+  min-height: 100vh;
+}
+
+.main-layout .header {
+  background: #fff;
+  text-align: right;
+  padding: 0 24px;
+}
+
+.main-layout .footer {
+  background: #fff;
+  text-align: center;
+}
