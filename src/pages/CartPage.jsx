@@ -9,6 +9,7 @@ const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [checkoutModalVisible, setCheckoutModalVisible] = useState(false);
+  const [insufficientStockModalVisible, setInsufficientStockModalVisible] = useState(false);
   const user = JSON.parse(localStorage.getItem('user'));
 
   // 加载购物车数据
@@ -59,6 +60,7 @@ const CartPage = () => {
       setCheckoutModalVisible(false);
     } catch (error) {
       message.error(error.message || '下单失败');
+      setInsufficientStockModalVisible(true);
     }
   };
 
@@ -181,9 +183,23 @@ const CartPage = () => {
         </div>
         <p style={{ marginTop: 16 }}>确认要下单吗？</p>
       </Modal>
+
+      <Modal
+        width={300}
+        style={{ top: 150 }}
+        open={insufficientStockModalVisible}
+        onOk={() => {
+          setCheckoutModalVisible(false);
+          setInsufficientStockModalVisible(false);
+        }}
+        closable={false}
+        cancelButtonProps={{ style: { display: 'none' } }}
+        destroyOnClose
+      >
+        库存不足！
+      </Modal>
     </div>
   );
 };
 
 export default CartPage;
-
