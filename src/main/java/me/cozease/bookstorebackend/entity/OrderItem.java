@@ -3,10 +3,14 @@ package me.cozease.bookstorebackend.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 订单项实体类
  */
+@NoArgsConstructor
+@Data
 @Entity
 @Table(name = "order_items")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -29,51 +33,6 @@ public class OrderItem {
 
     @Column(nullable = false)
     private Integer price;  // 以分为单位的价格
-
-    // 构造函数
-    public OrderItem() {
-    }
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    public Book getBook() {
-        return book;
-    }
-
-    public void setBook(Book book) {
-        this.book = book;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public Integer getPrice() {
-        return price;
-    }
-
-    public void setPrice(Integer price) {
-        this.price = price;
-    }
 
     // 计算小计金额的便捷方法（单位：分）
     public Integer getSubtotal() {
