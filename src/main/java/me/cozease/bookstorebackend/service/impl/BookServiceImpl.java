@@ -1,7 +1,7 @@
 package me.cozease.bookstorebackend.service.impl;
 
+import me.cozease.bookstorebackend.dao.BookDAO;
 import me.cozease.bookstorebackend.entity.Book;
-import me.cozease.bookstorebackend.repository.BookRepository;
 import me.cozease.bookstorebackend.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,40 +12,40 @@ import java.util.*;
 @Service
 @Transactional
 public class BookServiceImpl implements BookService {
-    private final BookRepository bookRepository;
+    private final BookDAO bookDAO;
 
     @Autowired
-    public BookServiceImpl(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
+    public BookServiceImpl(BookDAO bookDAO) {
+        this.bookDAO = bookDAO;
     }
 
     @Override
     public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+        return bookDAO.findAll();
     }
 
     @Override
     public Optional<Book> getBookById(Long id) {
-        return bookRepository.findById(id);
+        return bookDAO.findById(id);
     }
 
     @Override
     public List<Book> searchBooks(String keyword) {
         Set<Book> resultSet = new HashSet<>();
-        resultSet.addAll(bookRepository.findByTitleContaining(keyword));
-        resultSet.addAll(bookRepository.findByAuthorContaining(keyword));
-        resultSet.addAll(bookRepository.findByPublisherContaining(keyword));
+        resultSet.addAll(bookDAO.findByTitleContaining(keyword));
+        resultSet.addAll(bookDAO.findByAuthorContaining(keyword));
+        resultSet.addAll(bookDAO.findByPublisherContaining(keyword));
         return new ArrayList<>(resultSet);
     }
 
     @Override
     public Book addBook(Book book) {
-        return bookRepository.save(book);
+        return bookDAO.save(book);
     }
 
     @Override
     public Book updateBook(Long id, Book bookDetails) {
-        return bookRepository.findById(id)
+        return bookDAO.findById(id)
                 .map(book -> {
                     book.setTitle(bookDetails.getTitle());
                     book.setAuthor(bookDetails.getAuthor());
@@ -54,28 +54,28 @@ public class BookServiceImpl implements BookService {
                     book.setPrice(bookDetails.getPrice());
                     book.setStock(bookDetails.getStock());
                     book.setCoverUrl(bookDetails.getCoverUrl());
-                    return bookRepository.save(book);
+                    return bookDAO.save(book);
                 })
                 .orElseThrow(() -> new RuntimeException("图书不存在"));
     }
 
     @Override
     public void deleteBook(Long id) {
-        bookRepository.deleteById(id);
+        bookDAO.deleteById(id);
     }
 
     @Override
     public boolean checkStock(Long bookId, Integer quantity) {
-        return bookRepository.findById(bookId)
+        return bookDAO.findById(bookId)
                 .map(book -> book.getStock() >= quantity)
                 .orElse(false);
     }
 
     @Override
     public void updateStock(Long bookId, Integer quantity) {
-        bookRepository.findById(bookId).ifPresent(book -> {
+        bookDAO.findById(bookId).ifPresent(book -> {
             book.setStock(book.getStock() - quantity);
-            bookRepository.save(book);
+            bookDAO.save(book);
         });
     }
 }

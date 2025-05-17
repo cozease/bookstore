@@ -1,9 +1,9 @@
 package me.cozease.bookstorebackend.service.impl;
 
 import me.cozease.bookstorebackend.entity.*;
-import me.cozease.bookstorebackend.repository.BookRepository;
-import me.cozease.bookstorebackend.repository.OrderRepository;
-import me.cozease.bookstorebackend.repository.UserRepository;
+import me.cozease.bookstorebackend.dao.BookDAO;
+import me.cozease.bookstorebackend.dao.OrderDAO;
+import me.cozease.bookstorebackend.dao.UserDAO;
 import me.cozease.bookstorebackend.service.CartService;
 import me.cozease.bookstorebackend.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,25 +15,25 @@ import java.util.List;
 @Service
 @Transactional
 public class OrderServiceImpl implements OrderService {
-    private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
-    private final BookRepository bookRepository;
+    private final OrderDAO orderDAO;
+    private final UserDAO userDAO;
+    private final BookDAO bookDAO;
     private final CartService cartService;
 
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository,
-                        UserRepository userRepository,
-                        BookRepository bookRepository,
+    public OrderServiceImpl(OrderDAO orderDAO,
+                        UserDAO userDAO,
+                        BookDAO bookDAO,
                         CartService cartService) {
-        this.orderRepository = orderRepository;
-        this.userRepository = userRepository;
-        this.bookRepository = bookRepository;
+        this.orderDAO = orderDAO;
+        this.userDAO = userDAO;
+        this.bookDAO = bookDAO;
         this.cartService = cartService;
     }
 
     @Override
     public Order createOrder(Long userId, String shippingAddress) {
-        User user = userRepository.findById(userId)
+        User user = userDAO.findById(userId)
                 .orElseThrow(() -> new RuntimeException("用户不存在"));
 
         // 获取购物车项
@@ -67,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
 
             // 更新库存
             book.setStock(book.getStock() - cartItem.getQuantity());
-            bookRepository.save(book);
+            bookDAO.save(book);
 
             // 计算总金额（单位：分）
             totalAmount += book.getPrice() * cartItem.getQuantity();
@@ -75,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
         order.setTotalAmount(totalAmount);
 
         // 保存订单
-        Order savedOrder = orderRepository.save(order);
+        Order savedOrder = orderDAO.save(order);
 
         // 清空购物车
         cartService.clearCart(userId);
@@ -85,23 +85,23 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getUserOrders(Long userId) {
-        User user = userRepository.findById(userId)
+        User user = userDAO.findById(userId)
                 .orElseThrow(() -> new RuntimeException("用户不存在"));
-        return orderRepository.findByUserOrderByCreatedAtDesc(user);
+        return orderDAO.findByUserOrderByCreatedAtDesc(user);
     }
 
     @Override
     public Order getOrderById(Long orderId) {
-        return orderRepository.findById(orderId)
+        return orderDAO.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("订单不存在"));
     }
 
     @Override
     public Order updateOrderStatus(Long orderId, String status) {
-        return orderRepository.findById(orderId)
+        return orderDAO.findById(orderId)
                 .map(order -> {
                     order.setStatus(status);
-                    return orderRepository.save(order);
+                    return orderDAO.save(order);
                 })
                 .orElseThrow(() -> new RuntimeException("订单不存在"));
     }
